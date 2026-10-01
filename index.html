@@ -3,66 +3,571 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>슥뷰 — 가볍게 넘기는 만화 뷰어</title>
-<meta name="description" content="ZIP·CBZ·폴더·클라우드의 만화를 한쪽·두쪽으로 편하게. 읽던 곳은 모든 기기에서 이어집니다. iPhone · iPad · Mac · Android.">
-<meta property="og:title" content="슥뷰 — 가볍게 넘기는 만화 뷰어">
-<meta property="og:description" content="ZIP·CBZ·폴더·클라우드의 만화를 한쪽·두쪽으로 편하게. 읽던 곳은 모든 기기에서 이어집니다. iPhone · iPad · Mac · Android.">
-<meta property="og:image" content="https://sinabrolab.github.io/ssukview/img/og.png">
-<meta name="theme-color" content="#f2f2f7">
-<link rel="canonical" href="https://sinabrolab.github.io/ssukview/">
-<link rel="icon" href="img/icon-64.png">
-<link rel="apple-touch-icon" href="img/icon-180.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="style.css">
+<meta name="robots" content="noindex, nofollow">
+<title>슥뷰 관리자</title>
+<link rel="icon" href="../img/icon-64.png">
+<style>
+:root {
+  --ink: #1c1c1e; --muted: #6e6e76; --faint: #aeaeb2; --line: #e5e5ea;
+  --paper: #f2f2f7; --surface: #ffffff; --brand: #1f63e3; --brand-soft: #e6eefc;
+  --danger: #d70015; --danger-soft: #fdecee; --good: #1f8a3b; --good-soft: #e7f6ea;
+  --grid: #ececf1; --shadow: 0 1px 2px rgba(0,0,0,.05);
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f2f2f7; --muted: #a1a1a8; --faint: #636366; --line: #2c2c2e;
+    --paper: #000000; --surface: #1c1c1e; --brand: #4c8dff; --brand-soft: #1a2a4a;
+    --danger: #ff6961; --danger-soft: #3a1d1f; --good: #4cd964; --good-soft: #17301d;
+    --grid: #2a2a2e; --shadow: none;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 15px/1.5 "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  word-break: keep-all;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+.hidden { display: none !important; }
+
+/* Sign in */
+.center { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
+.login { width: min(380px, 100%); padding: 28px; text-align: center; }
+.login img { width: 64px; height: 64px; border-radius: 14px; margin: 0 auto 10px; display: block; }
+.login h1 { font-size: 20px; margin: 0 0 4px; }
+.login p { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
+.stack { display: grid; gap: 10px; }
+.field { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+.btn { border: 1px solid var(--line); background: var(--surface); padding: 9px 14px; border-radius: 10px; font-weight: 600; }
+.btn:hover { border-color: var(--faint); }
+.btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+.btn.small { padding: 5px 10px; font-size: 13px; border-radius: 8px; }
+.btn.good { background: var(--good-soft); border-color: transparent; color: var(--good); }
+.btn.danger { background: var(--danger-soft); border-color: transparent; color: var(--danger); }
+.btn:disabled { opacity: .5; cursor: default; }
+.divider { color: var(--faint); font-size: 12px; margin: 6px 0; }
+.error { color: var(--danger); font-size: 13px; min-height: 18px; }
+.notice { background: var(--brand-soft); border-radius: 12px; padding: 14px; text-align: left; font-size: 13px; }
+.notice code, pre { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+pre { white-space: pre-wrap; background: var(--paper); padding: 10px; border-radius: 8px; margin: 8px 0 0; }
+
+/* Shell */
+.shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+aside { background: var(--surface); border-right: 1px solid var(--line); padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; height: 100vh; }
+.logo { display: flex; align-items: center; gap: 10px; padding: 0 8px 18px; }
+.logo img { width: 36px; height: 36px; border-radius: 9px; }
+.logo b { display: block; font-size: 16px; }
+.logo small { color: var(--muted); font-size: 11px; letter-spacing: .08em; }
+.nav { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; border: 0; background: none; text-align: left; font-weight: 600; color: var(--muted); }
+.nav.on { background: var(--brand-soft); color: var(--brand); }
+.me { margin-top: auto; padding: 12px 8px 0; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.me button { margin-top: 8px; background: none; border: 0; color: var(--danger); padding: 0; font-weight: 600; }
+main { padding: 28px 32px 60px; min-width: 0; }
+.head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.head h2 { font-size: 26px; margin: 0; letter-spacing: -.02em; }
+.head .count { color: var(--muted); font-size: 15px; font-weight: 600; }
+.head .spacer { flex: 1; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; margin-bottom: 14px; }
+.tile { padding: 16px 18px; }
+.tile .label { color: var(--muted); font-size: 13px; font-weight: 600; }
+.tile .value { font-size: 32px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.tile .sub { color: var(--muted); font-size: 12px; }
+.windows { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-bottom: 14px; }
+.window { padding: 16px 18px; }
+.window h3, .chart h3 { margin: 0 0 10px; font-size: 15px; }
+.split { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.split div { font-size: 12px; color: var(--muted); }
+.split b { display: block; font-size: 22px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 14px; }
+.chart { padding: 16px 18px; position: relative; }
+.chart .row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.chart .row h3 { margin: 0; flex: 1; }
+.seg { display: inline-flex; background: var(--paper); border-radius: 9px; padding: 2px; }
+.seg button { border: 0; background: none; padding: 4px 10px; border-radius: 7px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.seg button.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+svg text { fill: var(--muted); font-size: 11px; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--surface); font-size: 12px; padding: 6px 9px; border-radius: 8px; white-space: nowrap; transform: translate(-50%, -110%); }
+
+/* Users */
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.toolbar .field { width: 280px; max-width: 100%; background: var(--surface); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; color: var(--muted); font-size: 12px; font-weight: 600; padding: 12px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 12px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.pill { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 12px; font-weight: 700; background: var(--paper); color: var(--muted); }
+.pill.ad { background: var(--good-soft); color: var(--good); }
+.pill.gift { background: var(--brand-soft); color: var(--brand); }
+.more { text-align: center; padding: 14px; }
+
+/* Modal */
+.backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: grid; place-items: center; padding: 16px; z-index: 20; }
+.modal { width: min(620px, 100%); max-height: calc(100vh - 32px); overflow: auto; padding: 22px 24px; }
+.modal h3 { margin: 0 0 4px; font-size: 19px; }
+.modal h4 { margin: 22px 0 10px; font-size: 14px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+.kv .k { color: var(--muted); font-size: 12px; }
+.kv .v { overflow-wrap: anywhere; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+.footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 22px; }
+.hint { color: var(--muted); font-size: 12px; margin-top: 6px; }
+textarea.field { min-height: 90px; resize: vertical; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--surface); padding: 10px 16px; border-radius: 10px; font-size: 14px; z-index: 30; }
+
+@media (max-width: 760px) {
+  .shell { grid-template-columns: 1fr; }
+  aside { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; padding: 10px 16px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .logo { padding: 0 8px 0 0; }
+  .me { margin: 0 0 0 auto; border: 0; padding: 0; }
+  main { padding: 20px 16px 60px; }
+  .grid2 { grid-template-columns: 1fr; }
+  .charts { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-<header class="top"><div class="wrap">
-<a class="brand" href="#"><img src="img/icon-64.png" alt="">슥뷰</a>
-<nav class="links"><a class="hide-s" href="#features">기능</a><a class="hide-s" href="support.html">지원</a><a class="hide-s" href="privacy.html">개인정보</a><a class="lang" href="en/">English</a></nav>
-</div></header>
-<main>
-<section class="hero wrap">
-  <img class="icon" src="img/icon-256.png" alt="슥뷰 아이콘">
-  <h1>가볍게 넘기는<br>만화 뷰어, 슥뷰</h1>
-  <p class="lead">ZIP·CBZ·PDF 파일, 이미지 폴더, 클라우드에 있는 만화를 한쪽·두쪽으로 편하게 읽으세요. 읽던 곳은 iPhone, iPad, Mac, Android 어디서든 이어집니다.</p>
-  <div class="buttons" id="download">
-    <a class="btn" href="#store-soon"><svg viewBox="0 0 24 24"><path d="M16.4 12.6c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.3.8 1.4 0 2.3-1.2 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.8-4.1zM13.9 5.1c.7-.8 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4z"/></svg>App Store</a>
-    <a class="btn" href="#store-soon"><svg viewBox="0 0 24 24"><path d="M3.6 2.2c-.3.3-.4.7-.4 1.2v17.2c0 .5.1.9.4 1.2l9.6-9.8-9.6-9.8zm10.7 10.9 2.8 2.8-11.2 6.4 8.4-9.2zm0-2.2L5.9 1.7l11.2 6.4-2.8 2.8zm4-1.7 3.2 1.8c.9.5.9 1.5 0 2l-3.2 1.8-3-3 3-2.6z"/></svg>Google Play</a>
-    <a class="btn secondary" href="https://github.com/sinabrolab/ssukview/releases/latest/download/SSUKView-macOS.dmg"><svg viewBox="0 0 24 24"><path d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 0 1 1.4-1.4L11 13.6V4a1 1 0 0 1 1-1zM5 19h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg>Mac용 다운로드 (DMG)</a>
-  </div>
-  <p class="note">Mac 버전은 무료이며 <a href="https://buymeacoffee.com/sinabrolab">커피 후원</a>이 가능합니다.<br><a href="https://github.com/sinabrolab/ssukview/releases">이전 버전과 변경 내역</a></p>
-</section>
 
-<div class="wrap screens">
-  <img src="img/mac-shelf.webp" alt="Mac에서 본 슥뷰 책장" loading="lazy">
-  <div class="phone"><img src="img/phone-shelf.webp" alt="iPhone에서 본 슥뷰 책장" loading="lazy"></div>
+<!-- Not configured / signed out / not an admin -->
+<div id="gate" class="center">
+  <div class="card login">
+    <img src="../img/icon-256.png" alt="">
+    <h1>슥뷰 관리자</h1>
+    <p id="gate-text">관리자 계정으로 로그인하세요.</p>
+    <div id="gate-signin" class="stack">
+      <button class="btn" data-oauth="google">Google로 로그인</button>
+      <button class="btn" data-oauth="apple">Apple로 로그인</button>
+      <div class="divider">또는 이메일</div>
+      <input class="field" id="email" type="email" placeholder="이메일" autocomplete="username">
+      <input class="field" id="password" type="password" placeholder="비밀번호" autocomplete="current-password">
+      <button class="btn primary" id="signin">로그인</button>
+    </div>
+    <div id="gate-extra"></div>
+    <div class="error" id="gate-error"></div>
+  </div>
 </div>
 
-<section class="wrap" id="features">
-  <h2>읽는 데만 집중하도록</h2>
-  <div class="features">
-    <div class="card"><div class="emoji">📚</div><h3>파일 그대로 열기</h3><p>ZIP·CBZ 압축파일, PDF, JPG·PNG·WebP·HEIC 이미지 폴더를 바로 엽니다. 쪽 순서는 파일 이름대로 자연스럽게 정렬돼요.</p></div>
-    <div class="card"><div class="emoji">☁️</div><h3>클라우드에서 바로</h3><p>Google Drive와 Dropbox의 책을 내려받지 않고 바로 읽고, 원하면 기기에 저장해 오프라인으로 읽을 수 있어요.</p></div>
-    <div class="card"><div class="emoji">📖</div><h3>한쪽 · 두쪽 보기</h3><p>화면 크기와 방향에 맞춰 자동으로 펼치고, 표지만 한쪽으로 두거나 오른쪽→왼쪽 넘김도 고를 수 있어요.</p></div>
-    <div class="card"><div class="emoji">🔁</div><h3>어느 기기에서나 이어서</h3><p>로그인하면 책장과 읽던 쪽, 즐겨찾기가 모든 기기에서 이어집니다. 책 파일은 서버에 올라가지 않아요.</p></div>
-    <div class="card"><div class="emoji">🗂️</div><h3>시리즈 자동 묶기</h3><p>같은 폴더나 같은 제목의 여러 권을 한 묶음으로 보여 주고, 다 읽으면 다음 권을 바로 이어 줍니다.</p></div>
-    <div class="card"><div class="emoji">🔍</div><h3>확대기와 밝기 조절</h3><p>작은 글씨는 확대기로 살펴보고, 휴대폰에서는 화면을 위아래로 밀어 밝기를 바로 맞출 수 있어요.</p></div>
-  </div>
-</section>
+<div id="app" class="shell hidden">
+  <aside>
+    <div class="logo"><img src="../img/icon-64.png" alt=""><div><b>슥뷰</b><small>ADMIN</small></div></div>
+    <button class="nav on" data-view="dashboard">대시보드</button>
+    <button class="nav" data-view="users">회원 관리</button>
+    <div class="me"><div id="me"></div><button id="signout">로그아웃</button></div>
+  </aside>
+  <main>
+    <section id="view-dashboard">
+      <div class="head"><h2>대시보드</h2><span class="muted" id="asof"></span><span class="spacer"></span>
+        <button class="btn small" id="refresh">새로고침</button></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="windows" id="windows"></div>
+      <div class="charts">
+        <div class="card chart" id="chart-dau">
+          <div class="row"><h3>일별 활성 회원</h3>
+            <div class="seg" id="dau-platform">
+              <button class="on" data-v="all">전체</button><button data-v="ios">iOS</button>
+              <button data-v="android">Android</button><button data-v="macos">Mac</button>
+            </div>
+            <div class="seg" id="dau-range"><button data-v="30" class="on">30일</button><button data-v="90">90일</button></div>
+          </div>
+          <div class="plot"></div>
+        </div>
+        <div class="card chart" id="chart-signups">
+          <div class="row"><h3>일별 신규 가입</h3>
+            <div class="seg" id="signup-range"><button data-v="30" class="on">30일</button><button data-v="90">90일</button></div>
+            <button class="btn small" id="csv-daily">CSV</button>
+          </div>
+          <div class="plot"></div>
+        </div>
+      </div>
+      <p class="hint">활성 회원은 로그인한 상태로 앱을 연 회원만 셉니다(한국 시간 기준 하루). 로그인하지 않고 쓰는 사람은 세지 않아요.</p>
+    </section>
 
-<section class="wrap">
-  <div class="platforms">
-    <h2>지원 기기</h2>
-    <ul>
-      <li>iPhone · iPad — iOS / iPadOS 15 이상 (App Store)</li>
-      <li>Mac — macOS 12 이상 (이 페이지에서 DMG 다운로드, 무료)</li>
-      <li>Android 휴대폰 · 태블릿 · 폴더블 — Android 7.0 이상 (Google Play)</li>
-    </ul>
-    <p class="note" style="text-align:left">휴대폰·태블릿 앱은 무료이며 책을 다 읽은 뒤 가끔 광고가 나옵니다. <b>광고 제거</b>(4,900원, 한 번 구매)를 사면 계속 광고 없이 읽을 수 있어요.</p>
-  </div>
-</section>
+    <section id="view-users" class="hidden">
+      <div class="head"><h2>회원 관리</h2><span class="count" id="user-count"></span><span class="spacer"></span>
+        <button class="btn small" id="csv-users">CSV</button></div>
+      <div class="toolbar">
+        <input class="field" id="q" type="search" placeholder="이메일, 닉네임, 회원 ID">
+        <div class="seg" id="filter">
+          <button class="on" data-v="all">전체</button><button data-v="adfree">광고 제거</button><button data-v="free">무료</button>
+        </div>
+      </div>
+      <div class="card table-wrap">
+        <table>
+          <thead><tr><th>닉네임</th><th>이메일</th><th>로그인</th><th>기기</th><th>책</th><th>광고 제거</th><th>마지막 접속</th><th>가입일</th><th></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="more hidden" id="more"><button class="btn small">더 보기</button></div>
+      </div>
+    </section>
+  </main>
+</div>
 
-</main>
-<footer><div class="wrap"><a href="privacy.html">개인정보 처리방침</a><a href="terms.html">이용약관</a><a href="support.html">고객지원</a><a href="support.html#delete-account">계정 삭제</a><div class="company">주식회사 시나브로랩 · 대표 고진영 · 사업자등록번호 265-86-02424 · 주소 경기도 화성시 동탄구 동탄대로21길 10, 1303호 · 이메일 admin@sinabrolab.com<br>© 2026 주식회사 시나브로랩</div></div></footer>
+<div id="modal" class="backdrop hidden">
+  <div class="card modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <h3 id="m-title"></h3>
+    <div class="muted" id="m-email"></div>
+    <h4>회원 정보</h4>
+    <label class="kv" style="display:block;margin-bottom:12px"><div class="k">닉네임</div>
+      <input class="field" id="m-nick" maxlength="20" placeholder="2~20자 · 비우면 메일 앞부분으로 보여요"></label>
+    <div class="grid2" id="m-info"></div>
+    <h4>광고 제거</h4>
+    <div id="m-status" class="muted"></div>
+    <div class="actions">
+      <button class="btn small good" data-grant="month">+1개월</button>
+      <button class="btn small good" data-grant="year">+1년</button>
+      <button class="btn small good" data-grant="forever">기한 없음</button>
+      <button class="btn small danger" data-grant="clear">회수</button>
+    </div>
+    <div class="grid2">
+      <label class="kv"><div class="k">만료일</div><input class="field" type="date" id="m-until"></label>
+      <label class="kv"><div class="k">사유</div><input class="field" id="m-note" maxlength="300" placeholder="예: 베타 테스터"></label>
+    </div>
+    <p class="hint">스토어에서 산 광고 제거는 여기서 바꿀 수 없어요. 여기서 주는 광고 제거는 테스터·운영 용도로만 쓰세요(App Store 심사 지침 3.1.1). 일반 회원에게 선물할 때는 App Store 오퍼 코드·Google Play 프로모션 코드를 쓰세요.</p>
+    <h4>관리자 메모</h4>
+    <textarea class="field" id="m-memo" maxlength="4000" placeholder="회원에게는 보이지 않아요"></textarea>
+    <div class="footer"><button class="btn" id="m-cancel">닫기</button><button class="btn primary" id="m-save">저장</button></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = "https://qdbffyvkedxyggypmvla.supabase.co";
+const SUPABASE_KEY = "sb_publishable_cfDHQ3oQd82Jb4Bv0_DBVA_4Yyp022j";
+const REGISTER_SQL = "insert into public.admins (user_id)\nselect id from auth.users where email = '내 이메일';";
+
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = (n) => Number(n ?? 0).toLocaleString("ko-KR");
+const day = (iso) => iso ? new Date(iso).toLocaleDateString("sv-SE", {timeZone: "Asia/Seoul"}) : "";
+const ago = (iso) => {
+  if (!iso) return "—";
+  const m = (Date.now() - new Date(iso)) / 60000;
+  if (m < 60) return `${Math.max(1, Math.round(m))}분 전`;
+  if (m < 1440) return `${Math.round(m / 60)}시간 전`;
+  if (m < 43200) return `${Math.round(m / 1440)}일 전`;
+  return day(iso);
+};
+const PLATFORM = {ios: "iOS", android: "Android", macos: "Mac", web: "웹", other: "기타"};
+const PROVIDER = {google: "Google", apple: "Apple", email: "이메일"};
+function toast(text) {
+  const t = document.createElement("div");
+  t.className = "toast"; t.textContent = text; document.body.append(t);
+  setTimeout(() => t.remove(), 2400);
+}
+function download(name, rows) {
+  const csv = rows.map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["﻿" + csv], {type: "text/csv"}));
+  a.download = name; a.click();
+}
+
+const configured = SUPABASE_URL.startsWith("http") && SUPABASE_KEY.length > 20;
+const db = configured ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+function gate(text, {signin = true, extra = "", error = ""} = {}) {
+  $("#app").classList.add("hidden");
+  $("#gate").classList.remove("hidden");
+  $("#gate-text").textContent = text;
+  $("#gate-signin").classList.toggle("hidden", !signin);
+  $("#gate-extra").innerHTML = extra;
+  $("#gate-error").textContent = error;
+}
+
+async function start() {
+  if (!db) {
+    gate("아직 서버 주소가 없어요.", {signin: false, extra:
+      `<div class="notice">tool/site/site.json의 <code>supabase_url</code>, <code>supabase_anon_key</code>를 채우고(또는 config.local.json이 있는 Mac에서) 사이트를 다시 빌드하세요.</div>`});
+    return;
+  }
+  const {data: {session}} = await db.auth.getSession();
+  if (!session) return gate("관리자 계정으로 로그인하세요.");
+  const {data: admin, error} = await db.rpc("is_admin");
+  if (error) {
+    return gate("관리자 기능이 서버에 아직 없어요.", {signin: false, extra:
+      `<div class="notice">Supabase SQL Editor에서 <code>supabase/migrations/202610020001_admin.sql</code>을 실행하세요.</div>
+       <p><button class="btn small" onclick="signOut()">로그아웃</button></p>`, error: error.message});
+  }
+  if (!admin) {
+    return gate(`${session.user.email ?? ""} 계정은 관리자가 아니에요.`, {signin: false, extra:
+      `<div class="notice">SQL Editor에서 한 번 실행하면 관리자가 돼요.<pre>${esc(REGISTER_SQL.replace("내 이메일", session.user.email ?? "내 이메일"))}</pre></div>
+       <p><button class="btn small" onclick="signOut()">다른 계정으로 로그인</button></p>`});
+  }
+  $("#gate").classList.add("hidden");
+  $("#app").classList.remove("hidden");
+  $("#me").textContent = session.user.email ?? "";
+  show(location.hash === "#users" ? "users" : "dashboard");
+}
+
+async function signOut() { await db.auth.signOut(); location.hash = ""; start(); }
+$("#signout").onclick = signOut;
+$$("[data-oauth]").forEach((b) => b.onclick = () => db.auth.signInWithOAuth({
+  provider: b.dataset.oauth,
+  options: {redirectTo: location.origin + location.pathname},
+}));
+$("#signin").onclick = async () => {
+  $("#gate-error").textContent = "";
+  const {error} = await db.auth.signInWithPassword({email: $("#email").value.trim(), password: $("#password").value});
+  if (error) $("#gate-error").textContent = "이메일이나 비밀번호를 확인해 주세요.";
+  else start();
+};
+$("#password").addEventListener("keydown", (e) => e.key === "Enter" && $("#signin").click());
+
+function show(view) {
+  $$(".nav").forEach((n) => n.classList.toggle("on", n.dataset.view === view));
+  $("#view-dashboard").classList.toggle("hidden", view !== "dashboard");
+  $("#view-users").classList.toggle("hidden", view !== "users");
+  history.replaceState(null, "", view === "users" ? "#users" : location.pathname);
+  if (view === "dashboard") loadDashboard(); else loadUsers();
+}
+$$(".nav").forEach((n) => n.onclick = () => show(n.dataset.view));
+
+function segmented(id, onChange) {
+  $$(`#${id} button`).forEach((b) => b.onclick = () => {
+    $$(`#${id} button`).forEach((x) => x.classList.toggle("on", x === b));
+    onChange(b.dataset.v);
+  });
+  return () => $(`#${id} .on`).dataset.v;
+}
+
+// ── Dashboard ─────────────────────────────────────────────
+let dash = null;
+const dauPlatform = segmented("dau-platform", () => drawCharts());
+const dauRange = segmented("dau-range", () => drawCharts());
+const signupRange = segmented("signup-range", () => drawCharts());
+$("#refresh").onclick = () => loadDashboard();
+
+async function loadDashboard() {
+  const {data, error} = await db.rpc("admin_dashboard");
+  if (error) return toast("불러오지 못했어요: " + error.message);
+  dash = data;
+  $("#asof").textContent = `${data.today} 기준`;
+  const tile = (label, value, sub = "") =>
+    `<div class="card tile"><div class="label">${label}</div><div class="value">${fmt(value)}</div><div class="sub">${sub}</div></div>`;
+  $("#tiles").innerHTML =
+    tile("전체 회원", data.total_users) +
+    tile("오늘 가입", data.today_signups) +
+    tile("광고 제거", data.ad_free_store + data.ad_free_grants, `구매 ${fmt(data.ad_free_store)} · 선물 ${fmt(data.ad_free_grants)}`) +
+    tile("책장 쓰는 회원", data.users_with_books) +
+    tile("동기화된 책", data.books);
+  const w = data.windows || {};
+  const win = (key, title) => `<div class="card window"><h3>${title}</h3><div class="split">
+      <div>전체<b>${fmt(w[key + "_all"])}</b></div><div>iOS<b>${fmt(w[key + "_ios"])}</b></div>
+      <div>Android<b>${fmt(w[key + "_android"])}</b></div><div>Mac<b>${fmt(w[key + "_macos"])}</b></div></div></div>`;
+  $("#windows").innerHTML = win("dau", "오늘 활성 (DAU)") + win("wau", "최근 7일 (WAU)") + win("mau", "최근 30일 (MAU)");
+  drawCharts();
+}
+
+function drawCharts() {
+  if (!dash) return;
+  const daily = dash.daily || [];
+  const p = dauPlatform();
+  plot($("#chart-dau"), daily.slice(-Number(dauRange())), (d) => d[p], "line",
+    (d) => `${d.day} · ${p === "all" ? "전체" : PLATFORM[p]} ${fmt(d[p])}명`);
+  plot($("#chart-signups"), daily.slice(-Number(signupRange())), (d) => d.signups, "bar",
+    (d) => `${d.day} · 가입 ${fmt(d.signups)}명`);
+}
+$("#csv-daily").onclick = () => dash && download("ssukview-daily.csv",
+  [["날짜", "활성 전체", "iOS", "Android", "Mac", "가입"],
+   ...dash.daily.map((d) => [d.day, d.all, d.ios, d.android, d.macos, d.signups])]);
+
+// One series, one axis: a line (activity) or bars (sign-ups), with hover.
+function plot(card, data, value, kind, label) {
+  const box = $(".plot", card);
+  const W = Math.max(320, box.clientWidth || 600), H = 240;
+  const m = {l: 34, r: 8, t: 10, b: 26};
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const max = Math.max(1, ...data.map(value));
+  const step = max <= 5 ? 1 : Math.ceil(max / 4);
+  const top = Math.ceil(max / step) * step;
+  const x = (i) => m.l + (data.length <= 1 ? iw / 2 : (i * iw) / (data.length - 1));
+  const bw = Math.max(2, iw / data.length - 2);
+  const bx = (i) => m.l + (i * iw) / data.length + 1;
+  const y = (v) => m.t + ih - (v / top) * ih;
+  let s = `<svg width="${W}" height="${H}" role="img" aria-label="${esc($("h3", card).textContent)}">`;
+  for (let v = 0; v <= top; v += step) {
+    s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/>`;
+    s += `<text x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+  }
+  const every = Math.ceil(data.length / 6);
+  data.forEach((d, i) => {
+    if ((i % every === 0 && data.length - 1 - i >= every * 0.7) || i === data.length - 1) {
+      const cx = kind === "bar" ? bx(i) + bw / 2 : x(i);
+      const anchor = i === data.length - 1 ? "end" : i === 0 ? "start" : "middle";
+      const tx = i === data.length - 1 ? Math.min(cx + 6, W - m.r) : i === 0 ? cx - 4 : cx;
+      s += `<text x="${tx}" y="${H - 6}" text-anchor="${anchor}">${d.day.slice(5).replace("-", ".")}</text>`;
+    }
+  });
+  if (kind === "line") {
+    const pts = data.map((d, i) => `${x(i)},${y(value(d))}`).join(" ");
+    s += `<polygon points="${m.l},${y(0)} ${pts} ${x(data.length - 1)},${y(0)}" fill="var(--brand)" opacity=".1"/>`;
+    s += `<polyline points="${pts}" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round"/>`;
+    s += `<line class="cross" y1="${m.t}" y2="${m.t + ih}" stroke="var(--faint)" visibility="hidden"/>`;
+    s += `<circle class="dot" r="4" fill="var(--brand)" stroke="var(--surface)" stroke-width="2" visibility="hidden"/>`;
+  } else {
+    data.forEach((d, i) => {
+      const v = value(d);
+      if (v > 0) {
+        const h = Math.max(2, y(0) - y(v));
+        s += `<path d="M${bx(i)},${y(0)} v${-(h - 3)} q0,-3 3,-3 h${bw - 6} q3,0 3,3 v${h - 3} z" fill="var(--brand)"/>`;
+      }
+    });
+  }
+  s += `<rect x="${m.l}" y="${m.t}" width="${iw}" height="${ih}" fill="transparent" class="hit"/></svg>`;
+  box.innerHTML = s + `<div class="tip hidden"></div>`;
+  const svg = $("svg", box), tip = $(".tip", box), hit = $(".hit", box);
+  hit.onmousemove = (e) => {
+    const r = svg.getBoundingClientRect();
+    const px = e.clientX - r.left;
+    const i = kind === "bar"
+      ? Math.min(data.length - 1, Math.max(0, Math.floor(((px - m.l) / iw) * data.length)))
+      : Math.min(data.length - 1, Math.max(0, Math.round(((px - m.l) / iw) * (data.length - 1))));
+    const d = data[i]; if (!d) return;
+    const cx = kind === "bar" ? bx(i) + bw / 2 : x(i);
+    if (kind === "line") {
+      const cross = $(".cross", svg), dot = $(".dot", svg);
+      cross.setAttribute("x1", cx); cross.setAttribute("x2", cx); cross.setAttribute("visibility", "visible");
+      dot.setAttribute("cx", cx); dot.setAttribute("cy", y(value(d))); dot.setAttribute("visibility", "visible");
+    }
+    tip.textContent = label(d);
+    tip.style.left = `${cx + (box.offsetLeft)}px`;
+    tip.style.top = `${y(value(d)) + box.offsetTop}px`;
+    tip.classList.remove("hidden");
+  };
+  hit.onmouseleave = () => {
+    tip.classList.add("hidden");
+    $$(".cross, .dot", svg).forEach((el) => el.setAttribute("visibility", "hidden"));
+  };
+}
+addEventListener("resize", () => drawCharts());
+
+// ── Users ─────────────────────────────────────────────────
+let users = [], total = 0, timer = null;
+const filter = segmented("filter", () => loadUsers());
+$("#q").oninput = () => { clearTimeout(timer); timer = setTimeout(() => loadUsers(), 300); };
+$("#more button").onclick = () => loadUsers(true);
+
+async function loadUsers(more = false) {
+  const {data, error} = await db.rpc("admin_users", {
+    p_query: $("#q").value.trim(), p_filter: filter(), p_limit: 100, p_offset: more ? users.length : 0,
+  });
+  if (error) return toast("불러오지 못했어요: " + error.message);
+  users = more ? users.concat(data) : data;
+  total = data[0]?.total ?? (more ? total : 0);
+  $("#user-count").textContent = `${fmt(total)}명`;
+  $("#more").classList.toggle("hidden", users.length >= total);
+  $("#rows").innerHTML = users.length ? users.map((u, i) => `<tr>
+      <td>${esc(u.nickname) || '<span class="muted">—</span>'}</td>
+      <td>${esc(u.email)}</td>
+      <td class="muted">${u.providers.map((p) => PROVIDER[p] ?? p).join(", ") || "—"}</td>
+      <td class="muted">${u.platforms.map((p) => PLATFORM[p] ?? p).join(", ") || "—"}</td>
+      <td class="num">${fmt(u.books)}</td>
+      <td>${badge(u)}</td>
+      <td class="muted">${ago(u.last_seen)}</td>
+      <td class="muted">${day(u.created_at)}</td>
+      <td><button class="btn small primary" data-edit="${i}">편집</button></td>
+    </tr>`).join("") : `<tr><td colspan="9" class="muted" style="text-align:center;padding:30px">회원이 없어요.</td></tr>`;
+  $$("[data-edit]").forEach((b) => b.onclick = () => edit(users[Number(b.dataset.edit)]));
+}
+function badge(u) {
+  if (u.store_ad_free) return `<span class="pill ad">구매</span>`;
+  if (u.granted) return `<span class="pill gift">선물${u.grant_until ? " · ~" + day(u.grant_until) : ""}</span>`;
+  return `<span class="pill">무료</span>`;
+}
+$("#csv-users").onclick = async () => {
+  const {data, error} = await db.rpc("admin_users", {p_query: $("#q").value.trim(), p_filter: filter(), p_limit: 500, p_offset: 0});
+  if (error) return toast(error.message);
+  download("ssukview-users.csv", [["회원 ID", "닉네임", "이메일", "로그인", "기기", "책", "구매", "선물 만료", "마지막 접속", "가입일", "메모"],
+    ...data.map((u) => [u.id, u.nickname, u.email, u.providers.join(" "), u.platforms.join(" "), u.books, u.store_ad_free ? "Y" : "",
+      u.granted ? (u.grant_until ? day(u.grant_until) : "기한 없음") : "", u.last_seen ? day(u.last_seen) : "", day(u.created_at), u.memo])]);
+};
+
+// ── Edit one member ───────────────────────────────────────
+let editing = null, grant = null;
+function edit(u) {
+  editing = u;
+  grant = {kind: u.granted ? (u.grant_until ? "until" : "forever") : "none", until: u.grant_until ? day(u.grant_until) : ""};
+  $("#m-title").textContent = u.nickname || u.email || "회원";
+  $("#m-email").textContent = u.nickname ? (u.email ?? "") : "";
+  const kv = (k, v) => `<div class="kv"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  $("#m-info").innerHTML =
+    kv("가입일", day(u.created_at)) + kv("마지막 접속", ago(u.last_seen)) +
+    kv("로그인", u.providers.map((p) => PROVIDER[p] ?? p).join(", ") || "—") +
+    kv("기기 · 버전", `${u.platforms.map((p) => PLATFORM[p] ?? p).join(", ") || "—"}${u.app_version ? " · " + esc(u.app_version) : ""}`) +
+    kv("책장의 책", `${fmt(u.books)}권`) + kv("회원 ID", `<span class="muted">${u.id}</span>`);
+  $("#m-until").value = grant.until;
+  $("#m-note").value = "";
+  $("#m-memo").value = u.memo ?? "";
+  $("#m-nick").value = u.nickname ?? "";
+  showStatus();
+  $("#modal").classList.remove("hidden");
+}
+function showStatus() {
+  const store = editing.store_ad_free ? "스토어에서 구매함. " : "";
+  $("#m-status").textContent = store + ({
+    none: "선물한 광고 제거 없음",
+    forever: "선물: 기한 없음",
+    until: `선물: ${grant.until}까지`,
+    clear: "저장하면 선물한 광고 제거를 회수해요",
+  })[grant.kind];
+}
+$$("[data-grant]").forEach((b) => b.onclick = () => {
+  const k = b.dataset.grant;
+  if (k === "clear" || k === "forever") { grant = {kind: k, until: ""}; $("#m-until").value = ""; }
+  else {
+    const base = grant.kind === "until" && new Date(grant.until) > new Date() ? new Date(grant.until) : new Date();
+    if (k === "month") base.setMonth(base.getMonth() + 1); else base.setFullYear(base.getFullYear() + 1);
+    grant = {kind: "until", until: base.toLocaleDateString("sv-SE")};
+    $("#m-until").value = grant.until;
+  }
+  showStatus();
+});
+$("#m-until").onchange = (e) => { grant = e.target.value ? {kind: "until", until: e.target.value} : {kind: "none", until: ""}; showStatus(); };
+const close = () => $("#modal").classList.add("hidden");
+$("#m-cancel").onclick = close;
+$("#modal").onclick = (e) => e.target.id === "modal" && close();
+addEventListener("keydown", (e) => e.key === "Escape" && close());
+$("#m-save").onclick = async () => {
+  const btn = $("#m-save"); btn.disabled = true;
+  try {
+    const was = editing.granted ? (editing.grant_until ? "until:" + day(editing.grant_until) : "forever") : "none";
+    const now = grant.kind === "until" ? "until:" + grant.until : grant.kind;
+    if (now !== was && !(now === "clear" && was === "none")) {
+      const {error} = await db.rpc("admin_set_ad_free", {
+        p_user: editing.id,
+        // End of that day, Korean time.
+        p_until: grant.kind === "until" ? `${grant.until}T23:59:59+09:00` : null,
+        p_forever: grant.kind === "forever",
+        p_clear: grant.kind === "clear" || grant.kind === "none",
+        p_note: $("#m-note").value.trim(),
+      });
+      if (error) throw error;
+    }
+    const nick = $("#m-nick").value.trim();
+    if (nick !== (editing.nickname ?? "")) {
+      if (nick.length === 1) throw new Error("닉네임은 2자 이상이어야 해요.");
+      const {error} = await db.rpc("admin_set_nickname", {p_user: editing.id, p_nickname: nick});
+      if (error) throw error;
+    }
+    if (($("#m-memo").value ?? "") !== (editing.memo ?? "")) {
+      const {error} = await db.rpc("admin_set_memo", {p_user: editing.id, p_memo: $("#m-memo").value});
+      if (error) throw error;
+    }
+    close(); toast("저장했어요."); loadUsers();
+  } catch (e) {
+    toast("저장하지 못했어요: " + (e.message ?? e));
+  } finally { btn.disabled = false; }
+};
+
+db?.auth.onAuthStateChange((event) => { if (event === "SIGNED_IN") start(); });
+start();
+</script>
 </body>
 </html>
