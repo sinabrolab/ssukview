@@ -40,17 +40,17 @@
 <tr><th>구분</th><th>항목</th><th>수집 시점</th></tr>
 <tr><td>회원가입 · 로그인</td><td>이메일 주소, 닉네임, 비밀번호(암호화 저장), 로그인 방식(이메일·Google·Apple), Google·Apple 계정 식별자. Apple 로그인에서 “이메일 가리기”를 고르면 Apple이 제공하는 중계 이메일</td><td>이용자가 계정을 만들거나 로그인할 때</td></tr>
 <tr><td>기기 간 동기화</td><td>책 식별값(쪽 이미지로 계산한 SHA-256 지문), 책 제목, 전체 쪽수, 읽은 쪽, 읽은 횟수, 즐겨찾기 여부, 추가·마지막 읽은 시각, 책장에서 지운 기록, 클라우드 책의 위치 정보(서비스 이름, 파일 ID, 파일·폴더 이름, 크기), 읽기 설정(넘김 방향 등)</td><td>로그인한 상태에서 책장이 바뀔 때</td></tr>
-<tr><td>구독(슥뷰 플러스)</td><td>구독 상품과 유효 여부. 결제 정보(카드 번호 등)는 Apple·Google이 처리하며 회사는 받지 않습니다.</td><td>구독을 구매·복원할 때</td></tr>
-<tr><td>광고(휴대폰·태블릿 앱)</td><td>광고 제공사 Google AdMob이 기기 정보, 광고 식별자, IP 주소, 광고 조회·클릭 정보를 처리할 수 있습니다. 슥뷰는 <b>비개인화 광고</b>만 요청합니다.</td><td>광고가 표시될 때 (슥뷰 플러스 구독자와 Mac 앱에는 광고 없음)</td></tr>
+<tr><td>광고 제거 구매</td><td>구매한 상품과 구매 여부. 결제 정보(카드 번호 등)는 Apple·Google이 처리하며 회사는 받지 않습니다.</td><td>광고 제거를 구매·복원할 때</td></tr>
+<tr><td>광고(휴대폰·태블릿 앱)</td><td>광고 제공사 Google AdMob이 기기 정보, 광고 식별자, IP 주소, 광고 조회·클릭 정보를 처리할 수 있습니다. 슥뷰는 <b>비개인화 광고</b>만 요청합니다.</td><td>광고가 표시될 때 (광고 제거 구매자와 Mac 앱에는 광고 없음)</td></tr>
 <tr><td>고객 문의</td><td>이메일 주소, 문의 내용</td><td>이용자가 문의할 때</td></tr>
 </table></div>
-<p><b>수집하지 않는 정보:</b> 만화 파일과 그 내용, 기기의 사진·연락처·위치, 클라우드 서비스의 로그인 토큰(Google Drive·Dropbox·네이버 MYBOX 연결 정보는 이용자 기기의 보안 저장소(키체인 등)에만 저장되며 회사 서버로 보내지 않습니다). 서비스에는 별도의 행동 분석·추적 도구가 없습니다.</p>
+<p><b>수집하지 않는 정보:</b> 만화 파일과 그 내용, 기기의 사진·연락처·위치, 클라우드 서비스의 로그인 토큰(Google Drive·Dropbox 연결 정보는 이용자 기기의 보안 저장소(키체인 등)에만 저장되며 회사 서버로 보내지 않습니다). 서비스에는 별도의 행동 분석·추적 도구가 없습니다.</p>
 
 <h2>2. 처리 목적</h2>
 <ul>
 <li>회원 식별, 로그인, 계정 관리와 부정 이용 방지</li>
 <li>여러 기기 사이의 책장·읽은 위치·설정 동기화</li>
-<li>슥뷰 플러스 구독 상태 확인과 광고 제거</li>
+<li>광고 제거 구매 확인과 광고 제거</li>
 <li>무료 이용자에게 광고 표시 (서비스 운영 비용 마련)</li>
 <li>문의 응대, 공지 전달</li>
 </ul>
@@ -68,9 +68,9 @@
 <tr><th>받는 자 (국가)</th><th>이전 항목</th><th>목적</th><th>보유 기간</th></tr>
 <tr><td>Supabase, Inc. (미국 법인 · 데이터 보관 리전: <span class="todo">[입력 필요: supabase_region]</span>)</td><td>1항의 회원가입 · 동기화 정보</td><td>계정 인증, 데이터베이스 보관</td><td>회원 탈퇴 시까지</td></tr>
 <tr><td>Google LLC (미국)</td><td>Google 로그인 식별자 · 이메일, 광고 관련 기기 정보</td><td>Google 로그인, 광고 제공(AdMob)</td><td>Google 정책에 따름</td></tr>
-<tr><td>Apple Inc. (미국)</td><td>Apple 로그인 식별자 · 이메일, 구독 정보</td><td>Apple 로그인, 인앱 결제</td><td>Apple 정책에 따름</td></tr>
+<tr><td>Apple Inc. (미국)</td><td>Apple 로그인 식별자 · 이메일, 구매 정보</td><td>Apple 로그인, 인앱 결제</td><td>Apple 정책에 따름</td></tr>
 </table></div>
-<p>이용자가 직접 연결하는 Google Drive, Dropbox, 네이버 MYBOX는 이용자 기기와 해당 서비스가 직접 통신하며, 회사 서버를 거치지 않습니다. 각 서비스의 개인정보 처리는 해당 회사의 방침을 따릅니다.</p>
+<p>이용자가 직접 연결하는 Google Drive, Dropbox는 이용자 기기와 해당 서비스가 직접 통신하며, 회사 서버를 거치지 않습니다. 각 서비스의 개인정보 처리는 해당 회사의 방침을 따릅니다.</p>
 <p>국외 이전을 원하지 않으면 로그인하지 않고 서비스를 이용하거나 회원 탈퇴할 수 있습니다. 이 경우 기기 간 동기화 기능을 쓸 수 없습니다.</p>
 
 <h2>6. Google 사용자 데이터 (Google Drive)</h2>
@@ -83,7 +83,7 @@
 <h2>8. 이용자의 권리와 행사 방법</h2>
 <ul>
 <li>앱의 [내 계정]에서 닉네임 확인, 비밀번호 변경(이메일 계정), 로그아웃, <b>회원 탈퇴</b>를 직접 할 수 있습니다.</li>
-<li>개인정보 열람·정정·삭제·처리정지를 이메일(<span class="todo">[입력 필요: email]</span>)로 요청할 수 있으며, 회사는 지체 없이(10일 이내) 조치하고 결과를 알려 드립니다.</li>
+<li>개인정보 열람·정정·삭제·처리정지를 이메일(admin@sinabrolab.com)로 요청할 수 있으며, 회사는 지체 없이(10일 이내) 조치하고 결과를 알려 드립니다.</li>
 <li>앱에 접근할 수 없는 경우의 계정 삭제 요청 방법은 <a href="support.html#delete-account">계정 삭제 안내</a>를 참고하세요.</li>
 <li>휴대폰·태블릿의 광고 동의 설정은 앱의 [내 계정] 화면 아래 ‘광고 개인정보 설정’이나 기기 설정에서 바꿀 수 있습니다.</li>
 </ul>
@@ -104,7 +104,7 @@
 <p>앱은 쿠키를 쓰지 않습니다. 광고가 표시되는 휴대폰·태블릿 앱에서는 Google AdMob이 광고 식별자를 사용할 수 있으며, 기기 설정에서 광고 식별자를 재설정하거나 사용을 제한할 수 있습니다. 이 웹사이트는 쿠키나 방문 분석 도구를 쓰지 않습니다.</p>
 
 <h2>12. 개인정보 보호책임자</h2>
-<p>성명: <span class="todo">[입력 필요: privacy_officer_ko]</span><br>이메일: <span class="todo">[입력 필요: email]</span></p>
+<p>성명: 고진영 (대표)<br>이메일: admin@sinabrolab.com</p>
 <p>개인정보 침해에 대한 신고나 상담은 아래 기관에 문의할 수 있습니다.</p>
 <ul>
 <li>개인정보침해신고센터 (privacy.kisa.or.kr / 국번 없이 118)</li>
@@ -119,6 +119,6 @@
 </article>
 
 </main>
-<footer><div class="wrap"><a href="privacy.html">개인정보 처리방침</a><a href="terms.html">이용약관</a><a href="support.html">고객지원</a><a href="support.html#delete-account">계정 삭제</a><div class="company">주식회사 시나브로랩 · 대표 <span class="todo">[입력 필요: ceo_ko]</span> · 사업자등록번호 <span class="todo">[입력 필요: business_number]</span> · 주소 <span class="todo">[입력 필요: address_ko]</span> · 이메일 <span class="todo">[입력 필요: email]</span><br>© 2026 주식회사 시나브로랩</div></div></footer>
+<footer><div class="wrap"><a href="privacy.html">개인정보 처리방침</a><a href="terms.html">이용약관</a><a href="support.html">고객지원</a><a href="support.html#delete-account">계정 삭제</a><div class="company">주식회사 시나브로랩 · 대표 고진영 · 사업자등록번호 265-86-02424 · 주소 경기도 화성시 동탄구 동탄대로21길 10, 1303호 · 이메일 admin@sinabrolab.com<br>© 2026 주식회사 시나브로랩</div></div></footer>
 </body>
 </html>

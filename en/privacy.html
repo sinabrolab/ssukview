@@ -40,17 +40,17 @@
 <tr><th>Purpose</th><th>Data</th><th>When</th></tr>
 <tr><td>Account &amp; sign-in</td><td>Email address, nickname, password (stored hashed), sign-in method (email, Google, Apple), Google/Apple account identifier. If you choose “Hide My Email” with Apple, the relay address Apple provides.</td><td>When you create an account or sign in</td></tr>
 <tr><td>Sync across devices</td><td>Book fingerprint (SHA-256 computed from page images), title, page count, current page, pages read, favorite flag, added and last-read times, shelf removals, location of cloud books (service name, file ID, file and folder names, size), reader settings (e.g. page direction)</td><td>When your shelf changes while signed in</td></tr>
-<tr><td>Subscription (SSUK View Plus)</td><td>Subscribed product and whether it is active. Payment details are handled by Apple or Google; we never receive them.</td><td>When you buy or restore a subscription</td></tr>
-<tr><td>Ads (phone &amp; tablet apps)</td><td>Our ad provider Google AdMob may process device information, advertising ID, IP address and ad impressions/clicks. SSUK View requests <b>non-personalized ads</b> only.</td><td>When an ad is shown (never for Plus subscribers or in the Mac app)</td></tr>
+<tr><td>Remove Ads purchase</td><td>The purchased product and whether it was bought. Payment details are handled by Apple or Google; we never receive them.</td><td>When you buy or restore Remove Ads</td></tr>
+<tr><td>Ads (phone &amp; tablet apps)</td><td>Our ad provider Google AdMob may process device information, advertising ID, IP address and ad impressions/clicks. SSUK View requests <b>non-personalized ads</b> only.</td><td>When an ad is shown (never after buying Remove Ads, or in the Mac app)</td></tr>
 <tr><td>Support</td><td>Email address and message</td><td>When you contact us</td></tr>
 </table></div>
-<p><b>We do not collect:</b> your comic files or their contents; photos, contacts or location; cloud sign-in tokens (Google Drive, Dropbox and Naver MYBOX connections are stored only in your device’s secure storage, such as the Keychain, and never sent to us). The Service contains no behavioral analytics or tracking tools.</p>
+<p><b>We do not collect:</b> your comic files or their contents; photos, contacts or location; cloud sign-in tokens (Google Drive and Dropbox connections are stored only in your device’s secure storage, such as the Keychain, and never sent to us). The Service contains no behavioral analytics or tracking tools.</p>
 
 <h2>2. Why we process it</h2>
 <ul>
 <li>Identifying you, signing you in, managing your account and preventing abuse</li>
 <li>Syncing your shelf, reading position and settings between devices</li>
-<li>Checking SSUK View Plus status and removing ads</li>
+<li>Checking the Remove Ads purchase and removing ads</li>
 <li>Showing ads to free users to fund the Service</li>
 <li>Answering support requests and sending notices</li>
 </ul>
@@ -68,9 +68,9 @@
 <tr><th>Recipient (country)</th><th>Data</th><th>Purpose</th><th>Retention</th></tr>
 <tr><td>Supabase, Inc. (USA; data region: <span class="todo">[TO FILL: supabase_region]</span>)</td><td>Account and sync data in section 1</td><td>Authentication, database hosting</td><td>Until account deletion</td></tr>
 <tr><td>Google LLC (USA)</td><td>Google sign-in identifier and email; device information for ads</td><td>Google sign-in, ads (AdMob)</td><td>Per Google’s policies</td></tr>
-<tr><td>Apple Inc. (USA)</td><td>Apple sign-in identifier and email; subscription status</td><td>Sign in with Apple, in-app purchases</td><td>Per Apple’s policies</td></tr>
+<tr><td>Apple Inc. (USA)</td><td>Apple sign-in identifier and email; purchase status</td><td>Sign in with Apple, in-app purchases</td><td>Per Apple’s policies</td></tr>
 </table></div>
-<p>Google Drive, Dropbox and Naver MYBOX, when you connect them, talk directly to your device; the data does not pass through our servers. Their own privacy policies apply.</p>
+<p>Google Drive and Dropbox, when you connect them, talk directly to your device; the data does not pass through our servers. Their own privacy policies apply.</p>
 <p>If you do not want your data transferred abroad, you can use the app without signing in or delete your account; sync between devices will then be unavailable.</p>
 
 <h2>6. Google user data (Google Drive)</h2>
@@ -83,7 +83,7 @@
 <h2>8. Your rights</h2>
 <ul>
 <li>In <i>My Account</i> you can view your nickname, change your password (email accounts), sign out and <b>delete your account</b>.</li>
-<li>You can ask us by email (<span class="todo">[TO FILL: email]</span>) to access, correct, delete or stop processing your data. We act without delay (within 10 days) and tell you the result.</li>
+<li>You can ask us by email (admin@sinabrolab.com) to access, correct, delete or stop processing your data. We act without delay (within 10 days) and tell you the result.</li>
 <li>If you cannot use the app, see <a href="support.html#delete-account">how to request account deletion</a>.</li>
 <li>On phones and tablets you can change ad consent from “Ad privacy settings” at the bottom of <i>My Account</i>, or in your device settings.</li>
 </ul>
@@ -104,7 +104,7 @@
 <p>The app uses no cookies. In the phone and tablet apps that show ads, Google AdMob may use your advertising ID, which you can reset or limit in your device settings. This website uses no cookies or visitor analytics.</p>
 
 <h2>12. Contact</h2>
-<p>Privacy officer: <span class="todo">[TO FILL: privacy_officer_en]</span><br>Email: <span class="todo">[TO FILL: email]</span></p>
+<p>Privacy officer: Jinyoung Ko (CEO)<br>Email: admin@sinabrolab.com</p>
 <p>Korean residents may also contact the Personal Information Infringement Report Center (privacy.kisa.or.kr, 118) or the Personal Information Dispute Mediation Committee (www.kopico.go.kr, 1833-6972).</p>
 
 <h2>13. Changes</h2>
@@ -112,6 +112,6 @@
 </article>
 
 </main>
-<footer><div class="wrap"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a><a href="support.html">Support</a><a href="support.html#delete-account">Delete account</a><div class="company">Sinabro Lab Co., Ltd. · CEO <span class="todo">[TO FILL: ceo_en]</span> · Business registration no. <span class="todo">[TO FILL: business_number]</span> · Address <span class="todo">[TO FILL: address_en]</span> · Email <span class="todo">[TO FILL: email]</span><br>© 2026 Sinabro Lab Co., Ltd.</div></div></footer>
+<footer><div class="wrap"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a><a href="support.html">Support</a><a href="support.html#delete-account">Delete account</a><div class="company">Sinabro Lab Co., Ltd. · CEO Jinyoung Ko · Business registration no. 265-86-02424 · Address #1303, 10 Dongtan-daero 21-gil, Dongtan-gu, Hwaseong-si, Gyeonggi-do, Republic of Korea · Email admin@sinabrolab.com<br>© 2026 Sinabro Lab Co., Ltd.</div></div></footer>
 </body>
 </html>
