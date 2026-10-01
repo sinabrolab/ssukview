@@ -214,6 +214,8 @@ textarea.field { min-height: 90px; resize: vertical; }
     <h3 id="m-title"></h3>
     <div class="muted" id="m-email"></div>
     <h4>회원 정보</h4>
+    <label class="kv" style="display:block;margin-bottom:12px"><div class="k">닉네임</div>
+      <input class="field" id="m-nick" maxlength="20" placeholder="2~20자 · 비우면 메일 앞부분으로 보여요"></label>
     <div class="grid2" id="m-info"></div>
     <h4>광고 제거</h4>
     <div id="m-status" class="muted"></div>
@@ -503,6 +505,7 @@ function edit(u) {
   $("#m-until").value = grant.until;
   $("#m-note").value = "";
   $("#m-memo").value = u.memo ?? "";
+  $("#m-nick").value = u.nickname ?? "";
   showStatus();
   $("#modal").classList.remove("hidden");
 }
@@ -545,6 +548,12 @@ $("#m-save").onclick = async () => {
         p_clear: grant.kind === "clear" || grant.kind === "none",
         p_note: $("#m-note").value.trim(),
       });
+      if (error) throw error;
+    }
+    const nick = $("#m-nick").value.trim();
+    if (nick !== (editing.nickname ?? "")) {
+      if (nick.length === 1) throw new Error("닉네임은 2자 이상이어야 해요.");
+      const {error} = await db.rpc("admin_set_nickname", {p_user: editing.id, p_nickname: nick});
       if (error) throw error;
     }
     if (($("#m-memo").value ?? "") !== (editing.memo ?? "")) {
