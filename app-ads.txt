@@ -1,0 +1,1 @@
+# AdMob publisher ID 를 site.json 의 admob_publisher_id 에 넣고 다시 빌드하세요.
